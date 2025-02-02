@@ -1,0 +1,15 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+        cd tools
+        ./build-all.sh
+    - uses: actions/upload-artifact@v4
+      with:
+        path: 'dist/**/*.zip'

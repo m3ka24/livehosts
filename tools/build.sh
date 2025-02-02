@@ -1,10 +1,26 @@
 #!/bin/bash
 
+check_command() {
+       local cmd=$1
+       echo "[CHECK COMMAND] $cmd"
+       if ! command -v "$cmd" &> /dev/null
+       then
+               echo "=> not found"
+               exit 1
+       fi
+       echo "=> found: `which $cmd`"
+}
+
+check_command rsync
+check_command zip
+check_command npm
+
 if [ -z "$1" ]
 	then
 		echo "No argument supplied"
 		exit 1
 fi
+echo "target: $1"
 
 # Move to the root directory
 cd ..
@@ -15,7 +31,7 @@ if [ -d ./dist/"$1" ]
 		rm -R ./dist/"$1"
 fi
 # Recreate dist directory
-mkdir ./dist/"$1"
+mkdir -p ./dist/"$1"
 
 # Copy source, except popup dir (managed by Vite)
 #cp -r ./src/* ./dist/"$1"/
@@ -34,4 +50,7 @@ mv ./dist/popup ./dist/"$1"/popup
 
 # Create zip
 cd ./dist/"$1"
-zip -qr livehosts-"$1".zip *
+zip_file=livehosts-"$1".zip
+zip -qr $zip_file *
+
+echo "$(realpath $zip_file) is created."
